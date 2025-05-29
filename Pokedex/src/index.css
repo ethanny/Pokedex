@@ -1,2 +1,24 @@
 @import "tailwindcss";
 
+
+@theme {
+  --default-font-family: "Inter", "sans-serif";
+  --color-bg: #E5E4D5;
+  --color-grass: #78C850;
+  --color-grass-shade: #639E3D;
+  --color-grass-tint: #A3E082;
+  --color-grass-dark: #3D5F27;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+  }
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./assets/fonts/Inter.ttf") format("truetype");
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
