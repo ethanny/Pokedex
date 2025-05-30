@@ -4,10 +4,7 @@
 @theme {
   --default-font-family: "Inter", "sans-serif";
   --color-bg: #E5E4D5;
-  --color-grass: #78C850;
-  --color-grass-shade: #639E3D;
-  --color-grass-tint: #A3E082;
-  --color-grass-dark: #3D5F27;
+  
   --animate-bounceUpDown: bounceUpDown 2s ease-in-out infinite;
   --animate-sweep: sweep 2s ease-in-out infinite;
 
@@ -32,6 +29,115 @@
   }
 }
 
+:root{
+  /* Normal */
+  --color-normal: #A8A77A;
+  --color-normal-shade: #8C8A63;
+  --color-normal-tint: #CFCB9E;
+  --color-normal-dark: #6F6F4C;
+
+  /* Fire */
+  --color-fire: #EE8130;
+  --color-fire-shade: #CC6C26;
+  --color-fire-tint: #F4A66B;
+  --color-fire-dark: #9C4E15;
+
+  /* Water */
+  --color-water: #6390F0;
+  --color-water-shade: #4E73C2;
+  --color-water-tint: #8FB1F5;
+  --color-water-dark: #3A58A1;
+
+  /* Electric */
+  --color-electric: #F7D02C;
+  --color-electric-shade: #C7A825;
+  --color-electric-tint: #FAE67E;
+  --color-electric-dark: #9F8414;
+
+  /* Grass */
+  --color-grass: #7AC74C;
+  --color-grass-shade: #639E3D;
+  --color-grass-tint: #A3E082;
+  --color-grass-dark: #4A7429;
+
+  /* Ice */
+  --color-ice: #96D9D6;
+  --color-ice-shade: #76B2AF;
+  --color-ice-tint: #C6EFED;
+  --color-ice-dark: #558987;
+
+  /* Fighting */
+  --color-fighting: #C22E28;
+  --color-fighting-shade: #9B241F;
+  --color-fighting-tint: #E25E5A;
+  --color-fighting-dark: #701612;
+
+  /* Poison */
+  --color-poison: #A33EA1;
+  --color-poison-shade: #832F82;
+  --color-poison-tint: #C66AC4;
+  --color-poison-dark: #621F61;
+
+  /* Ground */
+  --color-ground: #E2BF65;
+  --color-ground-shade: #B79C50;
+  --color-ground-tint: #F0D991;
+  --color-ground-dark: #8D7935;
+
+  /* Flying */
+  --color-flying: #A98FF3;
+  --color-flying-shade: #8872C2;
+  --color-flying-tint: #C7B8F9;
+  --color-flying-dark: #6D58A2;
+
+  /* Psychic */
+  --color-psychic: #F95587;
+  --color-psychic-shade: #C4446C;
+  --color-psychic-tint: #FB87AC;
+  --color-psychic-dark: #91294D;
+
+  /* Bug */
+  --color-bug: #A6B91A;
+  --color-bug-shade: #859216;
+  --color-bug-tint: #C4D844;
+  --color-bug-dark: #5F6C0F;
+
+  /* Rock */
+  --color-rock: #B6A136;
+  --color-rock-shade: #927F2B;
+  --color-rock-tint: #D6C769;
+  --color-rock-dark: #6D5F1E;
+
+  /* Ghost */
+  --color-ghost: #735797;
+  --color-ghost-shade: #5B4579;
+  --color-ghost-tint: #9A84B7;
+  --color-ghost-dark: #44335A;
+
+  /* Dragon */
+  --color-dragon: #6F35FC;
+  --color-dragon-shade: #5A2AC9;
+  --color-dragon-tint: #9D7CFE;
+  --color-dragon-dark: #431B9A;
+
+  /* Dark */
+  --color-dark: #705746;
+  --color-dark-shade: #594438;
+  --color-dark-tint: #9A8371;
+  --color-dark-dark: #3E2E23;
+
+  /* Steel */
+  --color-steel: #B7B7CE;
+  --color-steel-shade: #9292A4;
+  --color-steel-tint: #D5D5E5;
+  --color-steel-dark: #6E6E7E;
+
+  /* Fairy */
+  --color-fairy: #D685AD;
+  --color-fairy-shade: #AC6A8B;
+  --color-fairy-tint: #ECB3CD;
+  --color-fairy-dark: #874B6B;
+}
 @layer base {
   html {
     background-color: var(--color-bg);
