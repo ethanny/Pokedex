@@ -11,8 +11,13 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.8",
+    "axios": "^1.9.0",
+    "axios-cache-interceptor": "^1.8.0",
+    "events": "^3.3.0",
+    "pokedex-promise-v2": "^4.2.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-loading-skeleton": "^3.5.0",
     "tailwindcss": "^4.1.8"
   },
   "devDependencies": {

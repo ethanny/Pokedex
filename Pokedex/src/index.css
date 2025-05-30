@@ -8,6 +8,28 @@
   --color-grass-shade: #639E3D;
   --color-grass-tint: #A3E082;
   --color-grass-dark: #3D5F27;
+  --animate-bounceUpDown: bounceUpDown 2s ease-in-out infinite;
+  --animate-sweep: sweep 2s ease-in-out infinite;
+
+  @keyframes bounceUpDown {
+    0%, 100% {
+      transform: translateY(0) rotateX(0deg) rotateY(0);
+
+    }
+    50% {
+      transform: translateY(-10px) rotateX(5deg) rotateY(20deg);
+    }
+
+  }
+
+  @keyframes sweep{
+    0%, 100%{
+      mask-position:left 
+    }
+    50%{
+      mask-position:right
+    }
+  }
 }
 
 @layer base {
