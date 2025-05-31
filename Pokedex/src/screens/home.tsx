@@ -1,56 +1,54 @@
 import { useEffect, useRef, useState } from "react";
 
-import type {
-  NamedAPIResource,
-  NamedAPIResourceList,
-  Pokemon,
-} from "pokedex-promise-v2";
+import type { NamedAPIResourceList } from "pokedex-promise-v2";
 import Pokedex from "pokedex-promise-v2";
 import {
   AnimatedModal,
   ModalAnimation,
   type AnimatedModalObject,
 } from "@dorbus/react-animated-modal";
-import PokemonDetails from "../components/pokemon_details";
-import Card from "../components/card";
+import PokemonDetails from "../components/home/pokemon_details";
+import Card from "../components/home/card";
 import { getTypeTheme } from "../utils/type_theme";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  incrementOffset,
+  decrementOffset,
+  setCurrentResourceList,
+  setPokemons,
+  setSelectedPokemon,
+  limit,
+} from "../services/pokedex_slice";
+import type { RootState } from "../services/pokedex_store";
+
 export const pokemonApi = new Pokedex();
 
 export default function Home() {
-  const [currentResourceList, setCurrentResourceList] =
-    useState<NamedAPIResourceList>();
-  const [pokemonEndpoints, setPokemonEndpoints] = useState<NamedAPIResource[]>(
-    [],
-  );
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon>();
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [offset, setOffset] = useState<number>(0);
+  const dispatch = useDispatch();
+  const { offset, currentResourceList, pokemons, selectedPokemon } =
+    useSelector((state: RootState) => state.pokedex);
 
   const ref = useRef<AnimatedModalObject>(null);
-
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
 
     const interval = {
-      limit: 10,
+      limit: limit,
       offset: offset,
     };
     pokemonApi
       .getPokemonsList(interval)
       .then((resourceList: NamedAPIResourceList) => {
-        setCurrentResourceList(resourceList);
-        setPokemonEndpoints(resourceList.results);
+        dispatch(setCurrentResourceList(resourceList));
 
         Promise.all(
           resourceList.results.map((p) => pokemonApi.getPokemonByName(p.name)),
         )
           .then((detailedPokemons) => {
-            setPokemons(detailedPokemons);
+            dispatch(setPokemons(detailedPokemons));
           })
           .catch((error) => {
             console.error("Failed to fetch Pokémon details:", error);
@@ -78,6 +76,7 @@ export default function Home() {
         justify-between items-center
       "
     >
+      {/* Pokemon Details Modal */}
       <AnimatedModal
         animation={ModalAnimation.Reveal}
         ref={ref}
@@ -88,18 +87,22 @@ export default function Home() {
           padding: 0,
         }}
       >
-        {selectedPokemon && selectedPokemon.types[0]?.type.name && (
+        {pokemons[selectedPokemon] !== null && pokemons[selectedPokemon] && (
           <PokemonDetails
-            pokemon={selectedPokemon}
-            themeColor={getTypeTheme(selectedPokemon.types[0].type.name)}
+            pokemon={pokemons[selectedPokemon]}
+            themeColor={getTypeTheme(
+              pokemons[selectedPokemon].types[0].type.name,
+            )}
           />
         )}
       </AnimatedModal>
+
+      {/* Search Bar */}
       <div
         className="
           w-full
           mb-4
-          sticky bottom-0
+          sticky
         "
       >
         <input
@@ -116,6 +119,7 @@ export default function Home() {
         />
       </div>
 
+      {/* Pokemon Cards */}
       <div
         className="
           grid grid-cols-2 grid-rows-5
@@ -129,8 +133,9 @@ export default function Home() {
         {filteredPokemons.map((pokemon, index) => (
           <button
             onClick={() => {
+              dispatch(setSelectedPokemon(index));
               ref.current?.OpenModal(ModalAnimation.Reveal);
-              setSelectedPokemon(pokemons[index]);
+              console.log(pokemon);
             }}
           >
             <Card
@@ -142,6 +147,7 @@ export default function Home() {
         ))}
       </div>
 
+      {/* Pagination */}
       <div
         className="
           flex flex-row
@@ -149,11 +155,11 @@ export default function Home() {
         "
       >
         {currentResourceList?.previous && (
-          <button onClick={() => setOffset(offset - 10)}>Previous</button>
+          <button onClick={() => dispatch(decrementOffset())}>Previous</button>
         )}
 
         {currentResourceList?.next && (
-          <button onClick={() => setOffset(offset + 10)}>Next</button>
+          <button onClick={() => dispatch(incrementOffset())}>Next</button>
         )}
       </div>
     </div>

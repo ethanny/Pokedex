@@ -33,8 +33,9 @@ export default function Abilities({ abilities, themeColor }: AbilitiesProps) {
           gap-2
         "
       >
-        {abilities.map((ability) => (
+        {abilities.map((ability, index) => (
           <div
+            key={index}
             style={{
               backgroundColor: `var(${themeColor.dark})`,
             }}

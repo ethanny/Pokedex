@@ -14,7 +14,7 @@ export default function PokemonTypes({ types }: PokemonTypesProps) {
           className={`
             inline-flex
             px-1 py-1
-            rounded-full
+            rounded-[10px]
             items-center justify-center
           `}
         >
