@@ -38,7 +38,7 @@ A modern web application that allows users to browse and explore Pokemon data. B
 
 1. Clone the repository:
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/ethanny/Pokedex.git
 cd Pokedex
 ```
 
