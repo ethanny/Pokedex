@@ -107,7 +107,7 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
           {/* Pokemon image */}
           <div
             className="
-              h-full w-full
+
             "
           >
             {pokemon && (
@@ -119,7 +119,7 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
                 loading="lazy"
                 aria-label={pokemon.name}
                 className="
-                  object-cover
+                  object-scale-down
                   h-40 w-50
                   p-[30px]
                   transition-all

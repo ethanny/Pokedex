@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-
-import type { NamedAPIResourceList } from "pokedex-promise-v2";
 import Pokedex from "pokedex-promise-v2";
 import {
   AnimatedModal,
   ModalAnimation,
   type AnimatedModalObject,
 } from "@dorbus/react-animated-modal";
-import PokemonDetails from "../components/home/pokemon_details";
+import PokemonDetails from "./pokemon_details";
 import Card from "../components/home/card";
 import { getTypeTheme } from "../utils/type_theme";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,19 +15,30 @@ import {
   setPokemons,
   setSelectedPokemon,
   limit,
+  setSortOption,
 } from "../services/pokedex_slice";
 import type { RootState } from "../services/pokedex_store";
+import SortButton from "../components/home/sort_button";
+import ActionButton from "../components/home/action_button";
+import SortingOrderButton from "../components/home/sorting_order_button";
 
 export const pokemonApi = new Pokedex();
 
 export default function Home() {
   const dispatch = useDispatch();
-  const { offset, currentResourceList, pokemons, selectedPokemon } =
-    useSelector((state: RootState) => state.pokedex);
+  const {
+    offset,
+    currentResourceList,
+    pokemons,
+    selectedPokemon,
+    sortOption,
+    sortOrder,
+  } = useSelector((state: RootState) => state.pokedex);
 
   const ref = useRef<AnimatedModalObject>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchPokemons = async () => {
     setIsLoading(true);
@@ -51,7 +60,7 @@ export default function Home() {
         dispatch(setPokemons(detailedPokemons));
       })
       .catch((error) => {
-        console.error("Failed to fetch Pokémon details:", error);
+        setErrorMessage(`Failed to fetch Pokémon details: ${error}`);
       })
       .finally(() => {
         setIsLoading(false);
@@ -62,13 +71,23 @@ export default function Home() {
     fetchPokemons();
   }, [offset]);
 
-  const filteredPokemons = pokemons.filter((pokemon) => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-      pokemon.name.toLowerCase().includes(searchLower) ||
-      pokemon.id.toString().includes(searchLower)
-    );
-  });
+  const filteredPokemons = pokemons
+    .filter((pokemon) => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        pokemon.name.toLowerCase().includes(searchLower) ||
+        pokemon.id.toString().includes(searchLower)
+      );
+    })
+    .sort((a, b) => {
+      if (sortOption === "id") {
+        return sortOrder === "ascending" ? a.id - b.id : b.id - a.id;
+      } else {
+        return sortOrder === "ascending"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      }
+    });
 
   return (
     <div
@@ -76,7 +95,7 @@ export default function Home() {
         flex flex-col
         w-full max-w-[1000px] min-h-screen
         p-5 mx-auto
-        gap-5 justify-between items-center
+        gap-5 items-center justify-between
       "
     >
       {/* Pokemon Details Modal */}
@@ -131,22 +150,77 @@ export default function Home() {
         />
       </div>
 
+      {/* Sorting Buttons */}
+      <div
+        className="
+          flex flex-row
+          h-full
+          justify-center items-center
+        "
+      >
+        <SortingOrderButton isLoading={isLoading} />
+
+        <SortButton
+          label="ID"
+          onClick={() => dispatch(setSortOption("id"))}
+          isLoading={isLoading}
+          isLeft={true}
+          isSelected={sortOption === "id"}
+        />
+
+        <SortButton
+          label="Name"
+          onClick={() => dispatch(setSortOption("name"))}
+          isLoading={isLoading}
+          isLeft={false}
+          isSelected={sortOption === "name"}
+        />
+      </div>
+
       {/* Pokemon Cards */}
       <div
         className="
           grid grid-cols-2 grid-rows-5
-          h-full
+          w-full
           items-center gap-4
           sm:grid-cols-3 sm:grid-rows-4
           md:grid-cols-4 md:grid-rows-3
           lg:grid-cols-5 lg:grid-rows-2
         "
       >
-        {filteredPokemons.map((pokemon, index) => (
+        {filteredPokemons.length === 0 && (
+          // Error and empty state
+          <div
+            className="
+              flex
+              p-[50px]
+              text-black/30 text-center text-2xl font-medium
+              col-span-full row-span-full items-center justify-center
+            "
+          >
+            {errorMessage ? (
+              <p
+                className="
+                  text-red-500
+                "
+              >
+                {errorMessage}
+              </p>
+            ) : (
+              <p>
+                No Pokémon found.
+                <br />
+                Try another search or load more pokémons.
+              </p>
+            )}
+          </div>
+        )}
+
+        {filteredPokemons.map((pokemon) => (
           <button
             key={pokemon.name}
             onClick={() => {
-              dispatch(setSelectedPokemon(index));
+              dispatch(setSelectedPokemon(pokemon.id - 1));
               ref.current?.OpenModal(ModalAnimation.Reveal);
             }}
           >
@@ -159,48 +233,22 @@ export default function Home() {
       </div>
 
       {/* Load More Button */}
-      {currentResourceList?.next && (
-        <div
-          className="
-            "
-            >
-            <div
-            className="
-            inline-block
-            w-fit
-            relative
-          "
-          >
-            {/* Background shape */}
-            <div
-              className="
-                z-0
-                h-full w-full
-                bg-[#961818]
-                rounded-lg
-                absolute
-              "
-            />
-
-            {/* Button */}
-            <button
-              onClick={() => dispatch(loadMore())}
-              disabled={isLoading}
-              className="
-                w-[250px]
-                px-2 py-2
-                text-[18px] text-white
-                bg-[#CE2223]
-                rounded-lg border-3 border-solid border-[#961818]
-                cursor-pointer transition-all
-                relative disabled:opacity-50 disabled:cursor-not-allowed transform: translate-y-[-5px] hover:translate-y-[0px] duration-300
-              "
-            >
-              {isLoading ? "Loading..." : "Discover more Pokemons"}
-            </button>
-          </div>
-        </div>
-      )}
+      <div
+        className="
+          flex
+          w-full
+          mt-auto
+          justify-center
+        "
+      >
+        {currentResourceList?.next && (
+          <ActionButton
+            label="Discover more Pokemons"
+            onClick={() => dispatch(loadMore())}
+            isLoading={isLoading}
+          />
+        )}
+      </div>
     </div>
   );
 }

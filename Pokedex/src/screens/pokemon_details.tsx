@@ -1,17 +1,21 @@
 import { Diameter, Ruler } from "lucide-react";
-import type { PokemonProps } from "./card";
-import FeatureItem from "../pokemon details/features";
-import NavigateButton from "../pokemon details/navigate_button";
-import DetailHeader from "../pokemon details/detail_header";
-import Stat from "../pokemon details/stat";
-import PokemonTypes from "../pokemon details/types";
-import { getTypesWeakAgainst } from "../../utils/weakness";
-import Abilities from "../pokemon details/abilities";
-import { useDispatch } from "react-redux";
-import { navigatePokemon } from "../../services/pokedex_slice";
+import type { PokemonProps } from "../components/home/card";
+import FeatureItem from "../components/pokemon details/features";
+import NavigateButton from "../components/pokemon details/navigate_button";
+import DetailHeader from "../components/pokemon details/detail_header";
+import Stat from "../components/pokemon details/stat";
+import PokemonTypes from "../components/pokemon details/types";
+import { getTypesWeakAgainst } from "../utils/weakness";
+import Abilities from "../components/pokemon details/abilities";
+import { useDispatch, useSelector } from "react-redux";
+import { navigatePokemon } from "../services/pokedex_slice";
+import type { RootState } from "../services/pokedex_store";
 
 export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
   const dispatch = useDispatch();
+  const { currentResourceList } = useSelector(
+    (state: RootState) => state.pokedex,
+  );
 
   return (
     // Border
@@ -49,12 +53,20 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
             justify-between
           "
         >
-          <NavigateButton
-            text={(pokemon.id - 1).toString().padStart(4, "0")}
-            themeColor={themeColor}
-            iconPosition="left"
-            onClick={() => dispatch(navigatePokemon("prev"))}
-          />
+          {pokemon.id > 1 ? (
+            <NavigateButton
+              text={(pokemon.id - 1).toString().padStart(4, "0")}
+              themeColor={themeColor}
+              iconPosition="left"
+              onClick={() => dispatch(navigatePokemon("prev"))}
+            />
+          ) : (
+            <div
+              className="
+                w-[80px]
+              "
+            />
+          )}
           <h1
             style={{ backgroundColor: `var(${themeColor.dark})` }}
             className="
@@ -66,12 +78,20 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
             {pokemon.name.toUpperCase()}
           </h1>
 
-          <NavigateButton
-            text={(pokemon.id + 1).toString().padStart(4, "0")}
-            themeColor={themeColor}
-            iconPosition="right"
-            onClick={() => dispatch(navigatePokemon("next"))}
-          />
+          {pokemon.id < (currentResourceList?.count ?? 0) ? (
+            <NavigateButton
+              text={(pokemon.id + 1).toString().padStart(4, "0")}
+              themeColor={themeColor}
+              iconPosition="right"
+              onClick={() => dispatch(navigatePokemon("next"))}
+            />
+          ) : (
+            <div
+              className="
+                w-[80px]
+              "
+            />
+          )}
         </div>
 
         {/* Pokemon Image and Details */}
@@ -90,9 +110,9 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
             alt="Pokemon"
             style={{ backgroundColor: `var(${themeColor.shade})` }}
             className="
-              object-cover
+              object-scale-down
               w-[150px]
-              p-[10px]
+              p-[20px]
               rounded-full
             "
           />

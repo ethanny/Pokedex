@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { NamedAPIResourceList, Pokemon } from "pokedex-promise-v2";
 
 export const limit = 10;
+type SortOrder = "ascending" | "descending";
+type SortOption = "name" | "id";
 
 export const pokedexSlice = createSlice({
   name: "pokedex",
@@ -11,6 +13,8 @@ export const pokedexSlice = createSlice({
     pokemons: [] as Pokemon[],
     selectedPokemon: 0 as number,
     pendingNavigation: false as boolean,
+    sortOrder: "ascending" as SortOrder,
+    sortOption: "id" as SortOption,
   },
   reducers: {
     loadMore: (state) => {
@@ -53,6 +57,13 @@ export const pokedexSlice = createSlice({
         }
       }
     },
+    toggleSortOrder: (state) => {
+      state.sortOrder =
+        state.sortOrder === "ascending" ? "descending" : "ascending";
+    },
+    setSortOption: (state, action) => {
+      state.sortOption = action.payload;
+    },
   },
 });
 
@@ -62,6 +73,8 @@ export const {
   setPokemons,
   setSelectedPokemon,
   navigatePokemon,
+  toggleSortOrder,
+  setSortOption,
 } = pokedexSlice.actions;
 
 export default pokedexSlice.reducer;
