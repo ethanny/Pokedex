@@ -7,8 +7,12 @@ import Stat from "../pokemon details/stat";
 import PokemonTypes from "../pokemon details/types";
 import { getTypesWeakAgainst } from "../../utils/weakness";
 import Abilities from "../pokemon details/abilities";
+import { useDispatch } from "react-redux";
+import { navigatePokemon } from "../../services/pokedex_slice";
 
 export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
+  const dispatch = useDispatch();
+
   return (
     // Border
     <div
@@ -49,6 +53,7 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
             text={(pokemon.id - 1).toString().padStart(4, "0")}
             themeColor={themeColor}
             iconPosition="left"
+            onClick={() => dispatch(navigatePokemon("prev"))}
           />
           <h1
             style={{ backgroundColor: `var(${themeColor.dark})` }}
@@ -65,6 +70,7 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
             text={(pokemon.id + 1).toString().padStart(4, "0")}
             themeColor={themeColor}
             iconPosition="right"
+            onClick={() => dispatch(navigatePokemon("next"))}
           />
         </div>
 
@@ -88,8 +94,6 @@ export default function PokemonDetails({ pokemon, themeColor }: PokemonProps) {
               w-[150px]
               p-[10px]
               rounded-full
-              transition-all
-              duration-300 ease-in-out
             "
           />
 

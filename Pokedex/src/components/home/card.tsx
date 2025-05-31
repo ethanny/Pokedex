@@ -116,6 +116,8 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
                   .toString()
                   .padStart(3, "0")}.png`}
                 alt="Pokemon"
+                loading="lazy"
+                aria-label={pokemon.name}
                 className="
                   object-cover
                   h-40 w-50

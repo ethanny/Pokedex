@@ -19,7 +19,7 @@ export default function NavigateButton({
       onClick={onClick}
       className={`
         flex
-        h-full
+        w-[80px] h-full
         py-[10px] px-[5px]
         transition-all cursor-pointer
         hover:opacity-50 duration-300 ease-in-out items-center gap-

@@ -10,27 +10,58 @@ export const pokedexSlice = createSlice({
     currentResourceList: null as NamedAPIResourceList | null,
     pokemons: [] as Pokemon[],
     selectedPokemon: 0 as number,
+    pendingNavigation: false as boolean,
   },
   reducers: {
-    incrementOffset: (state) => {
-      state.offset += limit;
-    },
-    decrementOffset: (state) => {
-      state.offset -= limit;
+    loadMore: (state) => {
+      if (state.currentResourceList?.next) {
+        state.offset += limit;
+      }
     },
     setCurrentResourceList: (state, action) => {
       state.currentResourceList = action.payload;
     },
     setPokemons: (state, action) => {
-      state.pokemons = action.payload;
+      // Append new pokemons to existing list
+      state.pokemons = [...state.pokemons, ...action.payload];
+      // If there's a pending navigation, wait for new data to arrive before assining new selected pokemon
+      if (state.pendingNavigation) {
+        state.selectedPokemon = state.pokemons.length - action.payload.length;
+        state.pendingNavigation = false;
+      }
     },
     setSelectedPokemon: (state, action) => {
       state.selectedPokemon = action.payload;
     },
+    navigatePokemon: (state, action) => {
+      const direction = action.payload;
+      const currentIndex = state.selectedPokemon;
+
+      if (direction === "next") {
+        if (currentIndex < state.pokemons.length - 1) {
+          // If not at the end of current list, just increment index
+          state.selectedPokemon = currentIndex + 1;
+        } else if (state.currentResourceList?.next) {
+          // If at the end and there's more to load, load more and mark pending navigation
+          state.offset += limit;
+          state.pendingNavigation = true;
+        }
+      } else if (direction === "prev") {
+        if (currentIndex > 0) {
+          // If not at the start of current list, just decrement index
+          state.selectedPokemon = currentIndex - 1;
+        }
+      }
+    },
   },
 });
 
-export const { incrementOffset, decrementOffset, setCurrentResourceList, setPokemons, setSelectedPokemon } =
-  pokedexSlice.actions;
+export const {
+  loadMore,
+  setCurrentResourceList,
+  setPokemons,
+  setSelectedPokemon,
+  navigatePokemon,
+} = pokedexSlice.actions;
 
 export default pokedexSlice.reducer;
