@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Card, { getTypeBgVariants } from "../components/card";
+
 import type {
   NamedAPIResource,
   NamedAPIResourceList,
@@ -11,6 +11,9 @@ import {
   ModalAnimation,
   type AnimatedModalObject,
 } from "@dorbus/react-animated-modal";
+import PokemonDetails from "../components/pokemon_details";
+import Card from "../components/card";
+import { getTypeTheme } from "../utils/type_theme";
 export const pokemonApi = new Pokedex();
 
 export default function Home() {
@@ -76,16 +79,21 @@ export default function Home() {
       "
     >
       <AnimatedModal
-
-        animation={ModalAnimation.BlowUp}
+        animation={ModalAnimation.Reveal}
         ref={ref}
         closeOnBackgroundClick={true}
         backgroundStyle={{ opacity: 1 }}
         modalStyle={{
+          backgroundColor: "transparent",
           padding: 0,
         }}
       >
-        <div>Hello</div>
+        {selectedPokemon && selectedPokemon.types[0]?.type.name && (
+          <PokemonDetails
+            pokemon={selectedPokemon}
+            themeColor={getTypeTheme(selectedPokemon.types[0].type.name)}
+          />
+        )}
       </AnimatedModal>
       <div
         className="
@@ -109,7 +117,6 @@ export default function Home() {
       </div>
 
       <div
-        onClick={() => ref.current?.OpenModal(ModalAnimation.Reveal)}
         className="
           grid grid-cols-2 grid-rows-5
           h-full
@@ -119,12 +126,19 @@ export default function Home() {
           lg:grid-cols-5 lg:grid-rows-2
         "
       >
-        {filteredPokemons.map((pokemon) => (
-          <Card
-            key={pokemon.name}
-            pokemon={pokemon}
-            themeColor={getTypeBgVariants(pokemon.types[0].type.name)}
-          />
+        {filteredPokemons.map((pokemon, index) => (
+          <button
+            onClick={() => {
+              ref.current?.OpenModal(ModalAnimation.Reveal);
+              setSelectedPokemon(pokemons[index]);
+            }}
+          >
+            <Card
+              key={pokemon.name}
+              pokemon={pokemon}
+              themeColor={getTypeTheme(pokemon.types[0].type.name)}
+            />
+          </button>
         ))}
       </div>
 

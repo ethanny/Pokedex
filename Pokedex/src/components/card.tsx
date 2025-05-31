@@ -1,14 +1,5 @@
 import type { Pokemon } from "pokedex-promise-v2";
 
-export function getTypeBgVariants(type: string) {
-  return {
-    base: `${type}`,
-    shade: `${type}-shade`,
-    tint: `${type}-tint`,
-    dark: `${type}-dark`,
-  };
-}
-
 export interface PokemonProps {
   pokemon: Pokemon;
   themeColor: any;
@@ -20,11 +11,10 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
       {/* Card container */}
       <div
         style={{
-          backgroundImage: `linear-gradient(to bottom, var(--color-${themeColor.tint}), var(--color-${themeColor.shade}), var(--color-${themeColor.dark}))`,
+          backgroundImage: `linear-gradient(to bottom, var(${themeColor.tint}), var(${themeColor.shade}), var(${themeColor.dark}))`,
           backgroundSize: "100% 300%",
         }}
         className={`
-          w-full h-full
           p-[5px]
           bg-gradient-to-b
           rounded-[15px]
@@ -34,7 +24,7 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
         {/* Card column content */}
         <div
           style={{
-            backgroundImage: `linear-gradient(to bottom, var(--color-${themeColor.base}), var(--color-${themeColor.tint}))`,
+            backgroundImage: `linear-gradient(to bottom, var(${themeColor.base}), var(${themeColor.tint}))`,
           }}
           className={`
             inline-flex flex-col
@@ -66,7 +56,7 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
           >
             <p
               style={{
-                backgroundColor: `var(--color-${themeColor.shade})`,
+                backgroundColor: `var(${themeColor.shade})`,
               }}
               className={`
                 inline-flex
@@ -125,9 +115,9 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
                   .toString()
                   .padStart(3, "0")}.png`}
                 alt="Pokemon"
-                loading="lazy"
                 className="
                   object-cover
+                  h-40 w-50
                   p-[30px]
                   transition-all
                   duration-300 ease-in-out
@@ -137,21 +127,21 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
           </div>
 
           {/* Name */}
-          <p
+          <h1
             style={{
-              backgroundColor: `var(--color-${themeColor.shade})`,
+              backgroundColor: `var(${themeColor.shade})`,
             }}
             className={`
               inline-flex
               w-full
               px-2 py-2
-              font-regular text-white text-[14px]
+              font-[400] text-white text-[14px]
               rounded-b-[10px]
               translate-y-[-1px]
             `}
           >
             {pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}
-          </p>
+          </h1>
         </div>
       </div>
     </>
