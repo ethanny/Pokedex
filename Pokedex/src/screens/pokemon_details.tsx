@@ -6,9 +6,8 @@ import Stat from "../components/pokemon details/stat";
 import PokemonTypes from "../components/pokemon details/types";
 import { getTypesWeakAgainst } from "../utils/weakness";
 import Abilities from "../components/pokemon details/abilities";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { navigatePokemon } from "../services/pokedex_slice";
-import type { RootState } from "../services/pokedex_store";
 import type { Pokemon } from "pokedex-promise-v2";
 
 interface PokemonDetailsProps {
@@ -22,10 +21,8 @@ export default function PokemonDetails({
   themeColor,
   navigationHidden,
 }: PokemonDetailsProps) {
+  const imageId = pokemon.id.toString().padStart(3, "0");
   const dispatch = useDispatch();
-  const { currentResourceList } = useSelector(
-    (state: RootState) => state.pokedex,
-  );
 
   return (
     // Border
@@ -89,8 +86,7 @@ export default function PokemonDetails({
             {pokemon.name.toUpperCase()}
           </h1>
 
-          {pokemon.id < (currentResourceList?.count ?? 0) &&
-          !navigationHidden ? (
+          {pokemon.id < 1025 && !navigationHidden ? (
             <NavigateButton
               text={(pokemon.id + 1).toString().padStart(4, "0")}
               themeColor={themeColor}
@@ -115,9 +111,7 @@ export default function PokemonDetails({
           "
         >
           <img
-            src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokemon.id
-              .toString()
-              .padStart(3, "0")}.png`}
+            src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imageId}.png`}
             alt="Pokemon"
             style={{ backgroundColor: `var(${themeColor.shade})` }}
             className="

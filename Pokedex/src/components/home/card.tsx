@@ -6,6 +6,7 @@ interface PokemonProps {
 }
 
 export default function Card({ pokemon, themeColor }: PokemonProps) {
+  const imageId = pokemon.id.toString().padStart(3, "0");
   return (
     <>
       {/* Card container */}
@@ -112,9 +113,7 @@ export default function Card({ pokemon, themeColor }: PokemonProps) {
           >
             {pokemon && (
               <img
-                src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${pokemon.id
-                  .toString()
-                  .padStart(3, "0")}.png`}
+                src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${imageId}.png`}
                 alt="Pokemon"
                 loading="lazy"
                 aria-label={pokemon.name}

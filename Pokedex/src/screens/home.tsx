@@ -135,7 +135,7 @@ export default function Home() {
           backgroundImage: "linear-gradient(to bottom, #de3d3d, #961818)",
         }}
         className="
-          flex flex-row z-10
+          flex flex-row z-1
           w-full
           p-2 mb-5
           bg-[#CE2223]
@@ -170,7 +170,7 @@ export default function Home() {
             bg-white
             border-2 border-[#961818] rounded-full
             transition-all
-            hover:bg-[#961818]/20 hover:text-white duration-300
+            disabled:bg-gray-300 disabled:text-gray-500 disabled:border-gray-500 hover:bg-[#961818]/20 hover:text-white duration-300
           "
         >
           Search

@@ -7,6 +7,7 @@ type SortOption = "name" | "id";
 
 export const pokedexSlice = createSlice({
   name: "pokedex",
+
   initialState: {
     offset: 0 as number,
     currentResourceList: null as NamedAPIResourceList | null,

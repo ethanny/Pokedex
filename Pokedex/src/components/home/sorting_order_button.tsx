@@ -1,4 +1,4 @@
-import { ArrowUpNarrowWide, ArrowDownNarrowWide } from "lucide-react";
+import { ArrowUpNarrowWide  } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSortOrder } from "../../services/pokedex_slice";
 import type { RootState } from "../../services/pokedex_store";
