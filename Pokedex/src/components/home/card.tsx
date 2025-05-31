@@ -1,6 +1,6 @@
 import type { Pokemon } from "pokedex-promise-v2";
 
-export interface PokemonProps {
+interface PokemonProps {
   pokemon: Pokemon;
   themeColor: any;
 }

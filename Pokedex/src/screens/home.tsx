@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import Pokedex from "pokedex-promise-v2";
+import Pokedex, { type Pokemon } from "pokedex-promise-v2";
 import {
-  AnimatedModal,
   ModalAnimation,
   type AnimatedModalObject,
 } from "@dorbus/react-animated-modal";
-import PokemonDetails from "./pokemon_details";
 import Card from "../components/home/card";
 import { getTypeTheme } from "../utils/type_theme";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,6 +19,8 @@ import type { RootState } from "../services/pokedex_store";
 import SortButton from "../components/home/sort_button";
 import ActionButton from "../components/home/action_button";
 import SortingOrderButton from "../components/home/sorting_order_button";
+import toast, { Toaster } from "react-hot-toast";
+import PokemonModals from "../components/pokemon details/modals";
 
 export const pokemonApi = new Pokedex();
 
@@ -36,10 +36,12 @@ export default function Home() {
   } = useSelector((state: RootState) => state.pokedex);
 
   const ref = useRef<AnimatedModalObject>(null);
+  const searchRef = useRef<AnimatedModalObject>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [searchedPokemon, setSearchedPokemon] = useState<Pokemon | null>(null);
 
+  // Fetch paginated pokemons
   const fetchPokemons = async () => {
     setIsLoading(true);
 
@@ -59,8 +61,27 @@ export default function Home() {
       .then((detailedPokemons) => {
         dispatch(setPokemons(detailedPokemons));
       })
-      .catch((error) => {
-        setErrorMessage(`Failed to fetch Pokémon details: ${error}`);
+      .catch(() => {
+        toast.error("Failed to fetch Pokémon.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  //fetch a specific pokemon not previously fetched
+  const searchSpecificPokemon = async (pokemonNameId: string) => {
+    pokemonNameId.replace(/^0+/, "");
+    setIsLoading(true);
+
+    pokemonApi
+      .getPokemonByName(pokemonNameId)
+      .then((pokemon) => {
+        setSearchedPokemon(pokemon);
+        searchRef.current?.OpenModal(ModalAnimation.Reveal);
+      })
+      .catch(() => {
+        toast.error("Failed to fetch Pokémon. Pokemon does not exist.");
       })
       .finally(() => {
         setIsLoading(false);
@@ -98,39 +119,28 @@ export default function Home() {
         gap-5 items-center justify-between
       "
     >
-      {/* Pokemon Details Modal */}
-      <AnimatedModal
-        animation={ModalAnimation.Reveal}
-        ref={ref}
-        closeOnBackgroundClick={true}
-        backgroundStyle={{ opacity: 1 }}
-        modalStyle={{
-          backgroundColor: "transparent",
-          padding: 0,
-        }}
-      >
-        {pokemons[selectedPokemon] !== null && pokemons[selectedPokemon] && (
-          <PokemonDetails
-            pokemon={pokemons[selectedPokemon]}
-            themeColor={getTypeTheme(
-              pokemons[selectedPokemon].types[0].type.name,
-            )}
-          />
-        )}
-      </AnimatedModal>
+      <Toaster />
 
+      {/* Pokemon Search and Details Modal */}
+      <PokemonModals
+        pokemons={pokemons}
+        selectedPokemon={selectedPokemon}
+        searchedPokemon={searchedPokemon}
+        ref={ref}
+        searchRef={searchRef}
+      />
       {/* Search Bar */}
       <div
         style={{
           backgroundImage: "linear-gradient(to bottom, #de3d3d, #961818)",
         }}
         className="
-          z-10
+          flex flex-row z-10
           w-full
           p-2 mb-5
           bg-[#CE2223]
           rounded-full
-          sticky top-5
+          gap-1 sticky top-5
         "
       >
         <input
@@ -148,6 +158,23 @@ export default function Home() {
             outline-none sticky focus:ring-none duration-300
           "
         />
+
+        <button
+          disabled={isLoading || searchQuery.length === 0}
+          onClick={() => {
+            searchSpecificPokemon(searchQuery);
+          }}
+          className="
+            px-4 py-2
+            text-[#961818]
+            bg-white
+            border-2 border-[#961818] rounded-full
+            transition-all
+            hover:bg-[#961818]/20 hover:text-white duration-300
+          "
+        >
+          Search
+        </button>
       </div>
 
       {/* Sorting Buttons */}
@@ -192,27 +219,17 @@ export default function Home() {
           // Error and empty state
           <div
             className="
-              flex
+              h-full
               p-[50px]
-              text-black/30 text-center text-2xl font-medium
+              text-black/30 text-center text-xl font-medium
               col-span-full row-span-full items-center justify-center
             "
           >
-            {errorMessage ? (
-              <p
-                className="
-                  text-red-500
-                "
-              >
-                {errorMessage}
-              </p>
-            ) : (
-              <p>
-                No Pokémon found.
-                <br />
-                Try another search or load more pokémons.
-              </p>
-            )}
+            <p>
+              No Pokémon found.
+              <br /> Try another search, load more pokémons, or tap on the
+              search button.
+            </p>
           </div>
         )}
 
